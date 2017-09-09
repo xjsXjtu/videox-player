@@ -27,7 +27,7 @@ videos-player is controlled by keyboard:
 | key | action |
 | -     | -|
 | p     | Play |
-| Space | Pause |
+| f     | Freeze(pause) |
 | n     | Next frame|
 | N     | Last frame|
 | s     | Screenshot |
