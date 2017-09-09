@@ -26,10 +26,6 @@ def print_usage():
       "  | N     | Prev frame    |\n" \
       "  | s     | Screenshot    |\n"
 
-def process(im):
-    return cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-
-
 print_usage()
 
 cv2.namedWindow('image')
