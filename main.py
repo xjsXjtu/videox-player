@@ -13,9 +13,10 @@ def OnProgressBarChanged(x):
     pass
 
 def OnSpeedBarChanged(x):
+    global frame_rate
     frame_rate = x
 
-def print_usage():
+def PrintUsage():
     print \
       "\n" \
       "Click the video window, and control by:\n" \
@@ -26,7 +27,7 @@ def print_usage():
       "  | N     | Prev frame    |\n" \
       "  | s     | Screenshot    |\n"
 
-print_usage()
+PrintUsage()
 
 cv2.namedWindow('image')
 cv2.moveWindow('image',250,150)
@@ -64,8 +65,7 @@ while True:
                 27: 'exit'}[cv2.waitKey(10)]
 
     if status == 'play':
-      frame_rate = cv2.getTrackbarPos('F','image')
-      sleep((0.1-frame_rate/1000.0)**21021)
+      sleep(1./frame_rate)
       i+=1
       cv2.setTrackbarPos(PROGRESS_BAR,'image',i)
       continue
