@@ -4,8 +4,16 @@ import cv2, numpy as np
 import sys
 from time import sleep
 
-def flick(x):
+PROGRESS_BAR = "progress_bar"
+SPEED_BAR    = "speed_bar"
+
+frame_rate = 30
+
+def OnProgressBarChanged(x):
     pass
+
+def OnSpeedBarChanged(x):
+    frame_rate = x
 
 def print_usage():
     print \
@@ -16,12 +24,11 @@ def print_usage():
       "  | f     | Freeze(pause) |\n" \
       "  | n     | Next frame    |\n" \
       "  | N     | Prev frame    |\n" \
-      "  | s     | Screenshot    |\n" \
-      "  | a     | Accelerate    |\n" \
-      "  | d     | Decelerate    |"
+      "  | s     | Screenshot    |\n"
 
 def process(im):
     return cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+
 
 print_usage()
 
@@ -33,16 +40,13 @@ cap = cv2.VideoCapture(video)
 
 tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 i = 0
-cv2.createTrackbar('S','image', 0,int(tots)-1, flick)
-cv2.setTrackbarPos('S','image',0)
+cv2.createTrackbar(PROGRESS_BAR,'image', 0,int(tots)-1, OnProgressBarChanged)
+cv2.setTrackbarPos(PROGRESS_BAR,'image',0)
 
-cv2.createTrackbar('F','image', 1, 100, flick)
-frame_rate = 30
-cv2.setTrackbarPos('F','image',frame_rate)
+cv2.createTrackbar(SPEED_BAR,'image', 1, 100, OnSpeedBarChanged)
+cv2.setTrackbarPos(SPEED_BAR,'image',frame_rate)
 
-
-
-status = 'stay'
+status = 'freeze'
 
 while True:
   try:
@@ -60,8 +64,6 @@ while True:
                 ord('N'): 'prev_frame',
                 ord('n'): 'next_frame',
                 ord('s'): 'screenshot',
-                ord('a'): 'accelerate',
-                ord('d'): 'decelerate',
                 -1: status, 
                 27: 'exit'}[cv2.waitKey(10)]
 
@@ -69,28 +71,20 @@ while True:
       frame_rate = cv2.getTrackbarPos('F','image')
       sleep((0.1-frame_rate/1000.0)**21021)
       i+=1
-      cv2.setTrackbarPos('S','image',i)
+      cv2.setTrackbarPos(PROGRESS_BAR,'image',i)
       continue
     if status == 'freeze':
-      i = cv2.getTrackbarPos('S','image')
+      i = cv2.getTrackbarPos(PROGRESS_BAR,'image')
     if status == 'exit':
         break
     if status=='prev_frame':
         i-=1
-        cv2.setTrackbarPos('S','image',i)
+        cv2.setTrackbarPos(PROGRESS_BAR,'image',i)
         status='freeze'
     if status=='next_frame':
         i+=1
-        cv2.setTrackbarPos('S','image',i)
+        cv2.setTrackbarPos(PROGRESS_BAR,'image',i)
         status='freeze'
-    if status=='decelerate':
-        frame_rate = max(frame_rate - 5, 0)
-        cv2.setTrackbarPos('F', 'image', frame_rate)
-        status='play'
-    if status=='accelerate':
-        frame_rate = min(100,frame_rate+5)
-        cv2.setTrackbarPos('F', 'image', frame_rate)
-        status='play'
     if status=='screenshot':
         cv2.imwrite("./"+"Snap_"+str(i)+".jpg",im)
         print "Snap of Frame",i,"Taken!"
