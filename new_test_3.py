@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import cv2, numpy as np
 import sys
 from time import sleep
@@ -16,7 +18,7 @@ cv2.putText(controls, "W/w: Play, S/s: Stay, A/a: Prev, D/d: Next, E/e: Fast, Q/
 video = sys.argv[1] 
 cap = cv2.VideoCapture(video)
 
-tots = cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT)
+tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 i = 0
 cv2.createTrackbar('S','image', 0,int(tots)-1, flick)
 cv2.setTrackbarPos('S','image',0)
@@ -35,7 +37,7 @@ while True:
   try:
     if i==tots-1:
       i=0
-    cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, i)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, i)
     ret, im = cap.read()
     r = 750.0 / im.shape[1]
     dim = (750, int(im.shape[0] * r))
