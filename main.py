@@ -7,6 +7,24 @@ from time import sleep
 def flick(x):
     pass
 
+def print_usage():
+    print \
+      "\n" \
+      "Click the video window, and control by:\n" \
+      "  | key   | action        |\n" \
+      "  | p     | Play          |\n" \
+      "  | f     | Freeze(pause) |\n" \
+      "  | n     | Next frame    |\n" \
+      "  | N     | Prev frame    |\n" \
+      "  | s     | Screenshot    |\n" \
+      "  | a     | Accelerate    |\n" \
+      "  | d     | Decelerate    |"
+
+def process(im):
+    return cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+
+print_usage()
+
 cv2.namedWindow('image')
 cv2.moveWindow('image',250,150)
 
@@ -22,8 +40,7 @@ cv2.createTrackbar('F','image', 1, 100, flick)
 frame_rate = 30
 cv2.setTrackbarPos('F','image',frame_rate)
 
-def process(im):
-    return cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+
 
 status = 'stay'
 
@@ -38,13 +55,13 @@ while True:
     im = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
 
     cv2.imshow('image', im)
-    status = { ord('s'):'stay', ord('S'):'stay',
-                ord('w'):'play', ord('W'):'play',
-                ord('a'):'prev_frame', ord('A'):'prev_frame',
-                ord('d'):'next_frame', ord('D'):'next_frame',
-                ord('q'):'slow', ord('Q'):'slow',
-                ord('e'):'fast', ord('E'):'fast',
-                ord('c'):'snap', ord('C'):'snap',
+    status = {  ord('f'): 'freeze',
+                ord('p'): 'play',
+                ord('N'): 'prev_frame',
+                ord('n'): 'next_frame',
+                ord('s'): 'screenshot',
+                ord('a'): 'accelerate',
+                ord('d'): 'decelerate',
                 -1: status, 
                 27: 'exit'}[cv2.waitKey(10)]
 
@@ -54,31 +71,32 @@ while True:
       i+=1
       cv2.setTrackbarPos('S','image',i)
       continue
-    if status == 'stay':
+    if status == 'freeze':
       i = cv2.getTrackbarPos('S','image')
     if status == 'exit':
         break
     if status=='prev_frame':
         i-=1
         cv2.setTrackbarPos('S','image',i)
-        status='stay'
+        status='freeze'
     if status=='next_frame':
         i+=1
         cv2.setTrackbarPos('S','image',i)
-        status='stay'
-    if status=='slow':
+        status='freeze'
+    if status=='decelerate':
         frame_rate = max(frame_rate - 5, 0)
         cv2.setTrackbarPos('F', 'image', frame_rate)
         status='play'
-    if status=='fast':
+    if status=='accelerate':
         frame_rate = min(100,frame_rate+5)
         cv2.setTrackbarPos('F', 'image', frame_rate)
         status='play'
-    if status=='snap':
+    if status=='screenshot':
         cv2.imwrite("./"+"Snap_"+str(i)+".jpg",im)
         print "Snap of Frame",i,"Taken!"
-        status='stay'
+        status='freeze'
 
   except KeyError:
       print "Invalid Key was pressed"
+
 cv2.destroyWindow('image')
