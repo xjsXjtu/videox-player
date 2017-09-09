@@ -9,11 +9,6 @@ def flick(x):
 
 cv2.namedWindow('image')
 cv2.moveWindow('image',250,150)
-cv2.namedWindow('controls')
-cv2.moveWindow('controls',250,50)
-
-controls = np.zeros((50,750),np.uint8)
-cv2.putText(controls, "W/w: Play, S/s: Stay, A/a: Prev, D/d: Next, E/e: Fast, Q/q: Slow, Esc: Exit", (40,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255)
 
 video = sys.argv[1] 
 cap = cv2.VideoCapture(video)
@@ -33,7 +28,6 @@ def process(im):
 status = 'stay'
 
 while True:
-  cv2.imshow("controls",controls)
   try:
     if i==tots-1:
       i=0
@@ -42,10 +36,7 @@ while True:
     r = 750.0 / im.shape[1]
     dim = (750, int(im.shape[0] * r))
     im = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
-    if im.shape[0]>600:
-        im = cv2.resize(im, (500,500))
-        controls = cv2.resize(controls, (im.shape[1],25))
-    #cv2.putText(im, status, )
+
     cv2.imshow('image', im)
     status = { ord('s'):'stay', ord('S'):'stay',
                 ord('w'):'play', ord('W'):'play',
