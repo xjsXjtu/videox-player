@@ -1,8 +1,14 @@
 # videos-player
 
-## MOTIVATION
+Refering the use of OpenCV in the original repo,
+I greatly refactored the code, make it:
+ * More clear in the software structure
+ * Easier to add new file format
+
+## Motivation
 
 Damn!
+
 I just want to view YUV file on Mac.
 
 I googled, and the options on Mac are:
