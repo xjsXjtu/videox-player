@@ -1,4 +1,4 @@
-# videos-player
+# videox-player
 
 Refering the use of OpenCV in the original repo,
 I greatly refactored the code, make it:
