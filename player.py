@@ -5,9 +5,8 @@ import sys
 import time
 import threading
 
-class FileFormat(object):
-    YUV420 = 0
-    AUTO_DETECT = 1
+from decoder import FileFormat, DecoderFactory
+
 
 class PlayerState(object):
     PLAYING = 0
@@ -24,7 +23,7 @@ class PlayerCmd(object):
 class Player(object):
     def __init__(self, filename, fileformat):
         self._filename  = filename
-        self._format    = fileformat
+        self._fileformat    = fileformat
         self._framerate = -1
         self._cur_pos   = 0
         self._state     = PlayerState.PAUSED
@@ -39,9 +38,10 @@ class Player(object):
         cv2.namedWindow(self._win)
         cv2.moveWindow(self._win, 250, 150)
 
-        self._capture      = cv2.VideoCapture(self._filename)
-        self._total_frames = self._capture.get(cv2.CAP_PROP_FRAME_COUNT)
-        self._framerate    = self._capture.get(cv2.CAP_PROP_FPS)
+        self._decoder      = DecoderFactory().Create(
+                                  self._filename, self._fileformat)
+        self._total_frames = self._decoder.GetTotalFrames()
+        self._framerate    = self._decoder.GetFramerate()
 
         cv2.createTrackbar(self._PROGRESS_BAR, self._win,
                            0, int(self._total_frames) - 1,
@@ -105,7 +105,7 @@ class Player(object):
 
     def SaveCurFrame(self):
         with self._lock:
-            ret, im = self._capture.read()
+            ret, im = self._decoder.GetCurFrame()
             filename = "./" + "Frame_" + str(self.GetCurPos())+".jpg"
             cv2.imwrite(filename, im)
             print "Saved Frame: " + filename
@@ -132,8 +132,8 @@ class Player(object):
         
     def _ShowCurFrame(self):
         # TODO: use an Decoder interface
-        self._capture.set(cv2.CAP_PROP_POS_FRAMES, self._cur_pos)
-        ret, im = self._capture.read()
+        self._decoder.SetPosInFrame(self._cur_pos)
+        ret, im = self._decoder.GetCurFrame()
         r   = 750.0 / im.shape[1]
         dim = (750, int(im.shape[0] * r))
         im  = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
