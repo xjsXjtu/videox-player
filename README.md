@@ -36,4 +36,8 @@ videos-player is controlled by keyboard:
 | f     | Freeze(pause) |
 | n     | Next frame|
 | N     | Last frame|
-| s     | Screenshot |
+| s     | Screenshot|
+
+## Reference
+ * [GitHub VideoPlayer](https://github.com/maximus009/VideoPlayer)
+ * [yuv reader](https://stackoverflow.com/questions/2231518/how-to-read-a-frame-from-yuv-file-in-opencv)
