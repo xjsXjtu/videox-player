@@ -42,7 +42,7 @@ class Player(object):
                                   self._filename, self._fileformat)
         self._total_frames = self._decoder.GetTotalFrames()
         self._framerate    = self._decoder.GetFramerate()
-
+        
         cv2.createTrackbar(self._PROGRESS_BAR, self._win,
                            0, int(self._total_frames) - 1,
                            self._OnProgressBarChanged)
@@ -131,12 +131,8 @@ class Player(object):
             pass
         
     def _ShowCurFrame(self):
-        # TODO: use an Decoder interface
         self._decoder.SetPosInFrame(self._cur_pos)
         ret, im = self._decoder.GetCurFrame()
-        r   = 750.0 / im.shape[1]
-        dim = (750, int(im.shape[0] * r))
-        im  = cv2.resize(im, dim, interpolation = cv2.INTER_AREA)
         cv2.imshow(self._win, im)
         cv2.setTrackbarPos(self._PROGRESS_BAR, self._win,
                            self._cur_pos)

@@ -3,10 +3,13 @@
 import cv2, numpy as np
 import sys
 import time
-from player import Player, FileFormat, PlayerState, PlayerCmd
+from player  import Player, PlayerState, PlayerCmd
+from decoder import FileFormat
 
 def PrintUsage():
     print \
+      "\nmain.py filename format\n" \
+      "  format: 1-AUTO_DETECTED; 0-YUV420\n" \
       "\n" \
       "Click the video window, and control by:\n" \
       "  | key   | action        |\n" \
@@ -17,8 +20,7 @@ def PrintUsage():
       "  | s     | Screenshot    |\n"
 
 def main():
-    PrintUsage()
-    player = Player(sys.argv[1], FileFormat.AUTO_DETECT)
+    player = Player(sys.argv[1], int(sys.argv[2]))
     player.Start()
 
     while True:
@@ -55,5 +57,9 @@ def main():
             sys.exit()
 
 if __name__ == "__main__":
+    PrintUsage()
+    if len(sys.argv) < 3 :
+        print "Error input params"
+        sys.exit(-1)
     main()
 
